@@ -206,7 +206,7 @@ const refreshAccessToken=asyncHandler(async(req,res)=>{
       secure:true
      }
    
-      const {accessToken,newRefreshToken}=generateAccessAndRefreshTokens(user._id)
+      const {accessToken,newRefreshToken}= await generateAccessAndRefreshTokens(user._id)
    
       return res
       .status(200)
@@ -220,9 +220,44 @@ const refreshAccessToken=asyncHandler(async(req,res)=>{
    }
 })
 
+const changeCurrentPasssword= asyncHandler(async(req,res)=>{
+
+   //get oldpassword and new password from the user 
+   //  first user login is verify by auth middleware then we get the user _id and find in the database
+   // check user password is correct or not
+   // if password is correct the change the password with newpassword
+   // save password in database 
+   // return newpassword with response 
+   const {oldPassword,newPassword}=req.body
+
+   const user=await User.findById(req.user?._id)
+
+   const isPasswordCorret= await user.isPasswordCorret(oldPassword)
+
+   if (!isPasswordCorret) {
+       throw new ApiError(400,"Invalid Password")
+   }
+
+   user.password=newPassword
+   await user.save({validateBeforeSave:false})
+
+   return res
+   .status(200)
+   .json( new ApiResponse(200,{},"Password changed successfully"))
+
+
+})
+
+const getCurrentUser=asyncHandler(async(req,res)=>{
+   return res
+   .status(200)
+   .json(new ApiResponse(200,req.user,"current user fetched sucessfully"))
+})
+
 export {
    registerUser,
    loginUser,
    logOutUser,
-   refreshAccessToken
+   refreshAccessToken,
+   changeCurrentPasssword,getCurrentUser
 }
