@@ -254,10 +254,95 @@ const getCurrentUser=asyncHandler(async(req,res)=>{
    .json(new ApiResponse(200,req.user,"current user fetched sucessfully"))
 })
 
+const updateAccountDetails=asyncHandler(async(req,res)=>{
+    const {fullName,email}=req.body
+
+    if (!fullName||!email) {
+      throw new ApiError(400," All the fields are required") 
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user?._id,
+      {
+         $set:{
+            fullName,email:email
+         }
+      },
+      {new:true}
+      ).select("-password")
+
+      return res
+      .status(200)
+      .json(
+         new ApiResponse(200,user,"User details updated Successfully")
+         )
+})
+
+const updateUserAvatar=asyncHandler(async(req,res)=>{
+   const avatarLocalPath=req.files?.path
+
+   if (!avatarLocalPath) {
+      throw new ApiError(400,"Avatar file is mising ")
+   }
+
+  const avatar= await uploadOnCloudinary(avatarLocalPath)
+
+  if (!avatar.url) {
+    throw new ApiError(400,"Error while uploading on avatar")
+  }
+
+ const user= await User.findByIdAndUpdate(
+   req.user?._id,{
+      $set:{
+         avatar:avatar.url
+      }
+   },
+   {new :true}
+ ).select("-password")
+
+ return res
+ .status(200)
+ .json(
+   new ApiResponse(200,user,"Avatar image updated successfully")
+ )
+})
+
+const updateUserCoverImge=asyncHandler(async(req,res)=>{
+   const coverImageLocalPath=req.files?.path
+
+   if(!coverImageLocalPath){
+      throw new ApiError(400,"coverimage file is missing")
+   }
+
+  const coverImage= await uploadOnCloudinary(coverImageLocalPath)
+
+  if(!coverImage.url){
+    throw new ApiError(400,"Error while uploading coverimage ")
+  }
+
+  const user=await User.findByIdAndUpdate(
+      req.user?._id,{
+         $set:{
+            coverImage:coverImage.url
+         }
+      },{
+         new:true
+      }
+  ).select("-password")
+
+  return res
+  .status(200)
+  .json(200,user,"Cover Image updated successfully ")
+})
+
 export {
    registerUser,
    loginUser,
    logOutUser,
    refreshAccessToken,
-   changeCurrentPasssword,getCurrentUser
+   changeCurrentPasssword,
+   getCurrentUser,
+   updateAccountDetails,
+   updateUserAvatar,
+   updateUserCoverImge
 }
