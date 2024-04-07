@@ -16,9 +16,26 @@ app.use(cookieParser()) //cookieParser use for accept and set cookies from brows
 
 
 //routes import
-import userRouter from './routes/user.route.js'
+import userRouter from './routes/user.routes.js'
+import commentRouter from './routes/comment.routes.js'
+import dashboardRouter from './routes/dashboard.routes.js'
+import likeRouter from './routes/like.routes.js'
+import healthcheckRouter from './routes/healthcheck.router.js'
+import playlistRouter from './routes/playlist.routes.js'
+import subscriptionRouter from './routes/subscription.routes.js'
+import tweetRouter from './routes/tweet.routes.js'
+import videoRouter from './routes/video.routes.js'
 
 // routes declaration
 app.use("/api/v1/users",userRouter) // this middleware pass control to userRouter
+app.use("/api/v1/comments",commentRouter)
+app.use("/api/v1/dashboard",dashboardRouter)
+app.use("/api/v1/likes",likeRouter)
+app.use("/api/v1/heathcheck",healthcheckRouter)
+app.use("/api/v1/playlist",playlistRouter)
+app.use("/api/v1/subscriptions",subscriptionRouter)
+app.use("/api/v1/tweets",tweetRouter)
+app.use("/api/v1/videos",videoRouter)
+
 
 export  {app}
