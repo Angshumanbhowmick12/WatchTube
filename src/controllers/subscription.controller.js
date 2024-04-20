@@ -233,6 +233,19 @@ const getSubscribedChnnels=asyncHandler(async(req,res)=>{
 
     ])
 
+    if(subscribedChannel.length== 0){
+        throw new ApiError(404,"channel not found ")
+    }
+
+    return res
+                .status(200)
+                .json(
+                    new ApiResponse(
+                        200,
+                        subscribedChannel,
+                        " get all the subscribed channel successfully"
+                    )
+                )
 })
 
 export{
